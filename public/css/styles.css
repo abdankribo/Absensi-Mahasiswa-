@@ -1,0 +1,51 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4; /* Warna latar belakang body */
+    color: #333; /* Warna teks */
+    transition: background-color 0.3s, color 0.3s;
+  }
+  
+  .navbar {
+    background-color: #333; /* Warna latar belakang navbar */
+    color: #fff; /* Warna teks navbar */
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .navbar h1 {
+    margin: 0;
+  }
+  
+  .toggle-container {
+    display: flex;
+    align-items: center;
+  }
+  
+  #dark-mode-toggle {
+    margin-right: 5px;
+  }
+  
+  .dashboard-content {
+    padding: 20px;
+  }
+  
+  /* Dark Mode */
+  body.dark-mode {
+    background-color: #1a1a1a;
+    color: #fff;
+  }
+  
+  .navbar.dark-mode {
+    background-color: #000;
+    color: #fff;
+  }
+  
+  .dashboard-content.dark-mode {
+    background-color: #333;
+    color: #fff;
+  }
+  
