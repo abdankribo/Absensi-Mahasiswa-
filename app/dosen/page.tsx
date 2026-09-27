@@ -1,0 +1,2 @@
+import { requireRole } from "@/lib/authorization";
+export default async function DosenPage(){const user=await requireRole("DOSEN");return <div><div className="top"><div><h1 className="title">Dashboard Dosen</h1><p className="muted">{user.dosen?.nidn} · {user.faculty?.name??"Fakultas"}</p></div></div><section className="card"><h2>Jadwal Mengajar</h2><p className="muted">Jadwal dan mata kuliah yang ditugaskan kepada {user.name} akan tampil di sini.</p></section></div>}
