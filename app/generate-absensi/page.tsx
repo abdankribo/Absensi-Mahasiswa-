@@ -1,36 +1,20 @@
-"use client";
+import { Suspense } from "react";
+import GenerateAbsensiClient from "./client";
 
-import { useEffect, useState } from "react";
-import Link from "next/link";
-import { useSearchParams } from "next/navigation";
-
-export default function GenerateAbsensi() {
-  const params = useSearchParams();
-  const [message, setMessage] = useState("Memverifikasi QR absensi...");
-  const [done, setDone] = useState(false);
-
-  useEffect(() => {
-    const token = params.get("token");
-    if (!token) { setMessage("QR absensi tidak valid."); return; }
-
-    fetch("/api/absensi/confirm", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ token }),
-    })
-      .then(async (res) => {
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error || "Gagal memproses absensi.");
-        setDone(true);
-        setMessage(data.status === "already-recorded" ? "Absensi sudah tercatat sebelumnya." : "Absensi berhasil dikonfirmasi.");
-      })
-      .catch((error) => setMessage(error instanceof Error ? error.message : "Gagal memproses absensi."));
-  }, [params]);
-
-  return <main className="confirm-page"><div className="card confirm-card">
-    <div className="confirm-icon">{done ? "✓" : "…"}</div>
-    <h1>{done ? "Absensi Berhasil" : "Konfirmasi Absensi"}</h1>
-    <p className="muted">{message}</p>
-    <Link className="btn primary" href="/absensi">Kembali ke Daftar Hadir</Link>
-  </div></main>;
+export default function GenerateAbsensiPage() {
+  return (
+    <main className="confirm-page">
+      <Suspense
+        fallback={
+          <div className="card confirm-card">
+            <div className="confirm-icon">…</div>
+            <h1>Konfirmasi Absensi</h1>
+            <p className="muted">Memuat halaman konfirmasi...</p>
+          </div>
+        }
+      >
+        <GenerateAbsensiClient />
+      </Suspense>
+    </main>
+  );
 }
