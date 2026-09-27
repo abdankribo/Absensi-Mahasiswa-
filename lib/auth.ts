@@ -1,5 +1,6 @@
 import { createHmac, timingSafeEqual } from "node:crypto";
 import { verifyPassword } from "@/lib/password";
+export { verifyPassword };
 import { cookies } from "next/headers";
 import { prisma } from "@/lib/prisma";
 
