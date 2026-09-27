@@ -20,3 +20,5 @@ export async function POST(req:Request) {
   const session=await prisma.absensiSession.create({data:{jadwalId,dosenId:user.dosen.id,facultyId:user.facultyId,expiresAt:new Date(Date.now()+15*60*1000)}});
   return NextResponse.json({session,jadwal},{status:201});
 }
+
+export async function DELETE(req:Request){const user=await getSession();if(!user||user.role!=="DOSEN"||!user.dosen)return NextResponse.json({error:"Akses ditolak."},{status:403});const body=await req.json();const session=await prisma.absensiSession.findFirst({where:{id:Number(body.sessionId),dosenId:user.dosen.id,facultyId:user.facultyId}});if(!session)return NextResponse.json({error:"Sesi tidak ditemukan."},{status:404});await prisma.absensiSession.update({where:{id:session.id},data:{closedAt:new Date()}});return NextResponse.json({ok:true});}
