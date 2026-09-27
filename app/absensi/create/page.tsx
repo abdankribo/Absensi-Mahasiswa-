@@ -1,4 +1,4 @@
- "use client";
+"use client";
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
@@ -42,7 +42,7 @@ export default function CreateAbsensi() {
       });
       const d = await res.json();
       if (!res.ok) throw new Error(d.error || "Gagal membuat absensi");
-      const url = location.origin + "/generate-absensi?id=" + d.id;
+      const url = location.origin + "/generate-absensi?token=" + encodeURIComponent(d.token);
       setQr(await QRCode.toDataURL(url, { width: 260, margin: 2 }));
       setMessage("Sesi absensi dibuat. Scan QR ini untuk mengonfirmasi kehadiran.");
     } catch (e) {
@@ -52,26 +52,18 @@ export default function CreateAbsensi() {
 
   const filtered = jadwal.filter((j) => String(j.matakuliahId) === mk);
 
-  return (
-    <>
-      <div className="top">
-        <div><h1 className="title">Buat Absensi</h1><p className="muted">Buat sesi kehadiran dan QR Code.</p></div>
-        <Link className="btn secondary" href="/">Kembali</Link>
+  return <>
+    <div className="top"><div><h1 className="title">Buat Absensi</h1><p className="muted">Buat sesi kehadiran dan QR Code.</p></div><Link className="btn secondary" href="/">Kembali</Link></div>
+    <div className="card">
+      <div className="form-grid">
+        <div className="field"><label>Mahasiswa</label><select value={nim} onChange={(e) => setNim(e.target.value)}><option value="">Pilih mahasiswa</option>{mahasiswa.map((m) => <option key={m.nim} value={m.nim}>{m.nim} — {m.nama}</option>)}</select></div>
+        <div className="field"><label>Mata Kuliah</label><select value={mk} onChange={(e) => setMk(e.target.value)}><option value="">Pilih mata kuliah</option>{matakuliah.map((m) => <option key={m.id} value={m.id}>{m.namaMatakuliah} ({m.sks} SKS)</option>)}</select></div>
+        <div className="field"><label>Jadwal</label><select value={jadwalId} onChange={(e) => setJadwalId(e.target.value)} disabled={!mk}><option value="">Pilih jadwal</option>{filtered.map((j) => <option key={j.id} value={j.id}>{j.hari} — {j.jamMulai}</option>)}</select></div>
+        <div className="field"><label>Status awal</label><input value="Menunggu scan QR" readOnly /></div>
       </div>
-      <div className="card">
-        <div className="form-grid">
-          <div className="field"><label>Mahasiswa</label><select value={nim} onChange={(e) => setNim(e.target.value)}><option value="">Pilih mahasiswa</option>{mahasiswa.map((m) => <option key={m.nim} value={m.nim}>{m.nim} — {m.nama}</option>)}</select></div>
-          <div className="field"><label>Mata Kuliah</label><select value={mk} onChange={(e) => setMk(e.target.value)}><option value="">Pilih mata kuliah</option>{matakuliah.map((m) => <option key={m.id} value={m.id}>{m.namaMatakuliah} ({m.sks} SKS)</option>)}</select></div>
-          <div className="field"><label>Jadwal</label><select value={jadwalId} onChange={(e) => setJadwalId(e.target.value)} disabled={!mk}><option value="">Pilih jadwal</option>{filtered.map((j) => <option key={j.id} value={j.id}>{j.hari} — {j.jamMulai}</option>)}</select></div>
-          <div className="field"><label>Status awal</label><input value="Menunggu scan QR" readOnly /></div>
-        </div>
-        <div className="actions" style={{ marginTop: 20 }}>
-          <button className="btn primary" onClick={create} disabled={loading}>{loading ? "Membuat..." : "Generate QR"}</button>
-          <Link className="btn secondary" href="/absensi">Lihat Daftar Hadir</Link>
-        </div>
-        {message && <div className="notice">{message}</div>}
-        {qr && <div className="qrbox" style={{ marginTop: 20 }}><img src={qr} alt="QR Code absensi" width={260} height={260} /><strong>Scan QR ini untuk mengubah status menjadi Hadir</strong></div>}
-      </div>
-    </>
-  );
+      <div className="actions" style={{ marginTop: 20 }}><button className="btn primary" onClick={create} disabled={loading}>{loading ? "Membuat..." : "Generate QR"}</button><Link className="btn secondary" href="/absensi">Lihat Daftar Hadir</Link></div>
+      {message && <div className="notice">{message}</div>}
+      {qr && <div className="qrbox" style={{ marginTop: 20 }}><img src={qr} alt="QR Code absensi" width={260} height={260} /><strong>Scan QR ini untuk mengubah status menjadi Hadir</strong></div>}
+    </div>
+  </>;
 }
