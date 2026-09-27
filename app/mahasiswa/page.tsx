@@ -1,0 +1,2 @@
+import { requireRole } from "@/lib/authorization";
+export default async function MahasiswaPage(){const user=await requireRole("MAHASISWA");return <div><div className="top"><div><h1 className="title">Dashboard Mahasiswa</h1><p className="muted">NIM {user.mahasiswa?.nim} · {user.faculty?.name??"Fakultas"}</p></div></div><section className="card"><h2>Jadwal & Absensi</h2><p className="muted">Jadwal kuliah, scan QR, dan riwayat kehadiran akan tampil di sini.</p></section></div>}

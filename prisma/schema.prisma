@@ -1,63 +1,185 @@
 generator client {
   provider = "prisma-client-js"
 }
+
 datasource db {
   provider = "mysql"
   url = env("DATABASE_URL")
 }
+
+enum Role {
+  ADMIN
+  DOSEN
+  MAHASISWA
+}
+
+model Faculty {
+  id          Int          @id @default(autoincrement())
+  code        String       @unique
+  name        String
+  users       User[]
+  dosens      Dosen[]
+  mahasiswa   Mahasiswa[]
+  matakuliah  Matakuliah[]
+  jadwals     Jadwal[]
+  kelas       Kelas[]
+  sessions    AbsensiSession[]
+  absensis    Absensi[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
 model User {
-  id Int @id @default(autoincrement())
-  name String
-  email String @unique
-  emailVerifiedAt DateTime?
-  password String
-  rememberToken String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id              Int       @id @default(autoincrement())
+  name            String
+  identifier      String    @unique
+  email           String?   @unique
+  passwordHash    String
+  role            Role      @default(MAHASISWA)
+  facultyId       Int?
+  faculty         Faculty?  @relation(fields: [facultyId], references: [id], onDelete: Restrict)
+  dosen           Dosen?
+  mahasiswa       Mahasiswa?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  @@index([facultyId, role])
 }
+
+model Dosen {
+  id             Int              @id @default(autoincrement())
+  nidn           String           @unique
+  nama           String
+  userId         Int              @unique
+  facultyId      Int
+  user           User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  faculty        Faculty          @relation(fields: [facultyId], references: [id], onDelete: Restrict)
+  jadwals        Jadwal[]
+  matakuliahs    DosenMatakuliah[]
+  sessions       AbsensiSession[]
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  @@index([facultyId])
+}
+
 model Mahasiswa {
-  nim String @id
-  nama String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  absensis Absensi[]
+  nim          String        @id
+  nama         String
+  userId       Int?          @unique
+  facultyId    Int?
+  user         User?         @relation(fields: [userId], references: [id], onDelete: SetNull)
+  faculty      Faculty?      @relation(fields: [facultyId], references: [id], onDelete: Restrict)
+  kelasId      Int?
+  kelas        Kelas?        @relation(fields: [kelasId], references: [id], onDelete: SetNull)
+  absensis     Absensi[]
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  @@index([facultyId])
+  @@index([kelasId])
 }
+
+model Kelas {
+  id          Int          @id @default(autoincrement())
+  kode        String       @unique
+  nama        String
+  facultyId   Int
+  faculty     Faculty      @relation(fields: [facultyId], references: [id], onDelete: Restrict)
+  mahasiswa   Mahasiswa[]
+  jadwals     Jadwal[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  @@index([facultyId])
+}
+
 model Matakuliah {
-  id Int @id @default(autoincrement())
+  id             Int              @id @default(autoincrement())
   namaMatakuliah String
-  sks Int
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  jadwals Jadwal[]
-  absensis Absensi[]
+  sks            Int
+  facultyId      Int?
+  faculty        Faculty?         @relation(fields: [facultyId], references: [id], onDelete: Restrict)
+  jadwals        Jadwal[]
+  absensis       Absensi[]
+  dosens         DosenMatakuliah[]
+  createdAt      DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  @@index([facultyId])
 }
+
+model DosenMatakuliah {
+  dosenId       Int
+  matakuliahId  Int
+  dosen         Dosen      @relation(fields: [dosenId], references: [id], onDelete: Cascade)
+  matakuliah    Matakuliah @relation(fields: [matakuliahId], references: [id], onDelete: Cascade)
+  assignedAt    DateTime   @default(now())
+  @@id([dosenId, matakuliahId])
+}
+
 model Jadwal {
-  id Int @id @default(autoincrement())
-  hari String
-  jamMulai String
-  matakuliahId Int
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  matakuliah Matakuliah @relation(fields: [matakuliahId], references: [id], onDelete: Restrict)
-  absensis Absensi[]
+  id             Int        @id @default(autoincrement())
+  hari           String
+  jamMulai       String
+  jamSelesai     String?
+  matakuliahId   Int
+  facultyId      Int?
+  dosenId        Int?
+  kelasId        Int?
+  matakuliah     Matakuliah @relation(fields: [matakuliahId], references: [id], onDelete: Restrict)
+  faculty        Faculty?   @relation(fields: [facultyId], references: [id], onDelete: Restrict)
+  dosen          Dosen?     @relation(fields: [dosenId], references: [id], onDelete: SetNull)
+  kelas          Kelas?     @relation(fields: [kelasId], references: [id], onDelete: SetNull)
+  absensis       Absensi[]
+  sessions       AbsensiSession[]
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
   @@index([matakuliahId])
+  @@index([facultyId])
+  @@index([dosenId])
+  @@index([kelasId])
 }
+
+model AbsensiSession {
+  id            Int       @id @default(autoincrement())
+  qrToken       String    @unique @default(uuid())
+  jadwalId      Int
+  dosenId       Int
+  facultyId     Int
+  openedAt      DateTime  @default(now())
+  expiresAt     DateTime
+  closedAt      DateTime?
+  jadwal        Jadwal    @relation(fields: [jadwalId], references: [id], onDelete: Restrict)
+  dosen         Dosen     @relation(fields: [dosenId], references: [id], onDelete: Restrict)
+  faculty       Faculty   @relation(fields: [facultyId], references: [id], onDelete: Restrict)
+  absensis      Absensi[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  @@index([jadwalId])
+  @@index([dosenId])
+  @@index([facultyId])
+  @@index([expiresAt])
+}
+
 model Absensi {
-  id Int @id @default(autoincrement())
-  qrToken String @unique @default(uuid())
-  mahasiswaId String
-  jadwalId Int
-  matakuliahId Int
-  tanggalAbsensi DateTime
-  status String @default("Menunggu")
-  qrcodePath String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  mahasiswa Mahasiswa @relation(fields: [mahasiswaId], references: [nim], onDelete: Restrict)
-  jadwal Jadwal @relation(fields: [jadwalId], references: [id], onDelete: Restrict)
-  matakuliah Matakuliah @relation(fields: [matakuliahId], references: [id], onDelete: Restrict)
+  id              Int              @id @default(autoincrement())
+  qrToken         String           @unique @default(uuid())
+  mahasiswaId     String
+  jadwalId        Int
+  matakuliahId    Int
+  sessionId       Int?
+  facultyId       Int?
+  tanggalAbsensi  DateTime
+  status          String           @default("Menunggu")
+  qrcodePath      String?
+  mahasiswa       Mahasiswa        @relation(fields: [mahasiswaId], references: [nim], onDelete: Restrict)
+  jadwal          Jadwal            @relation(fields: [jadwalId], references: [id], onDelete: Restrict)
+  matakuliah      Matakuliah        @relation(fields: [matakuliahId], references: [id], onDelete: Restrict)
+  session         AbsensiSession?  @relation(fields: [sessionId], references: [id], onDelete: SetNull)
+  faculty         Faculty?          @relation(fields: [facultyId], references: [id], onDelete: Restrict)
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
   @@index([mahasiswaId])
   @@index([jadwalId])
   @@index([matakuliahId])
+  @@index([sessionId])
+  @@index([facultyId])
   @@index([tanggalAbsensi])
+  @@unique([sessionId, mahasiswaId])
 }
