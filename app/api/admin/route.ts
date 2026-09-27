@@ -84,11 +84,11 @@ export async function PATCH(req: Request) {
 export async function DELETE(req: Request) {
   const user=await admin();if(!user)return NextResponse.json({error:"Akses admin ditolak."},{status:403});
   const body=await req.json();const id=String(body.id);try{
-    if(body.type==="mahasiswa"){const m=await prisma.mahasiswa.findFirst({where:{nim:id,facultyId:user.facultyId}});if(!m)return NextResponse.json({error:"Mahasiswa tidak ditemukan."},{status:404});await prisma.user.updateMany({where:{identifier:m.nim,facultyId:user.facultyId},data:{mahasiswa:{disconnect:true}}});await prisma.user.deleteMany({where:{identifier:m.nim,facultyId:user.facultyId}});await prisma.mahasiswa.delete({where:{nim:m.nim}});}
+    if(body.type==="mahasiswa"){const m=await prisma.mahasiswa.findFirst({where:{nim:id,facultyId:user.facultyId}});if(!m)return NextResponse.json({error:"Mahasiswa tidak ditemukan."},{status:404});await prisma.user.deleteMany({where:{identifier:m.nim,facultyId:user.facultyId}});await prisma.mahasiswa.delete({where:{nim:m.nim}});}
     else if(body.type==="dosen"){const d=await prisma.dosen.findFirst({where:{id:Number(id),facultyId:user.facultyId}});if(!d)return NextResponse.json({error:"Dosen tidak ditemukan."},{status:404});await prisma.dosen.delete({where:{id:d.id}});await prisma.user.delete({where:{id:d.userId}});}
-    else if(body.type==="matakuliah"){await prisma.matakuliah.delete({where:{id:Number(id)}});}
-    else if(body.type==="kelas"){await prisma.kelas.delete({where:{id:Number(id)}});}
-    else if(body.type==="jadwal"){await prisma.jadwal.delete({where:{id:Number(id)}});}
+    else if(body.type==="matakuliah"){const mk=await prisma.matakuliah.findFirst({where:{id:Number(id),facultyId:user.facultyId}});if(!mk)return NextResponse.json({error:"Mata kuliah tidak ditemukan."},{status:404});await prisma.matakuliah.delete({where:{id:mk.id}});}
+    else if(body.type==="kelas"){const k=await prisma.kelas.findFirst({where:{id:Number(id),facultyId:user.facultyId}});if(!k)return NextResponse.json({error:"Kelas tidak ditemukan."},{status:404});await prisma.kelas.delete({where:{id:k.id}});}
+    else if(body.type==="jadwal"){const j=await prisma.jadwal.findFirst({where:{id:Number(id),facultyId:user.facultyId}});if(!j)return NextResponse.json({error:"Jadwal tidak ditemukan."},{status:404});await prisma.jadwal.delete({where:{id:j.id}});}
     else return NextResponse.json({error:"Tipe data tidak valid."},{status:400});
     return NextResponse.json({ok:true});
   }catch{return NextResponse.json({error:"Data tidak dapat dihapus. Kemungkinan masih dipakai oleh jadwal/absensi."},{status:409});}
