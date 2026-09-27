@@ -1,3 +1,20 @@
-import {redirect} from "next/navigation"; import {prisma} from "@/lib/prisma";
-export const dynamic="force-dynamic";
-export default async function GenerateAbsensi({searchParams}:{searchParams:Promise<{id?:string}>}){const {id}=await searchParams;const attendanceId=Number(id);if(!Number.isInteger(attendanceId)||attendanceId<1)redirect("/absensi?error=invalid-qr");const record=await prisma.absensi.findUnique({where:{id:attendanceId}});if(!record)redirect("/absensi?error=qr-not-found");redirect("/absensi?success=attendance-recorded");}
+import { Suspense } from "react";
+import GenerateAbsensiClient from "./client";
+
+export default function GenerateAbsensiPage() {
+  return (
+    <main className="confirm-page">
+      <Suspense
+        fallback={
+          <div className="card confirm-card">
+            <div className="confirm-icon">…</div>
+            <h1>Konfirmasi Absensi</h1>
+            <p className="muted">Memuat halaman konfirmasi...</p>
+          </div>
+        }
+      >
+        <GenerateAbsensiClient />
+      </Suspense>
+    </main>
+  );
+}
