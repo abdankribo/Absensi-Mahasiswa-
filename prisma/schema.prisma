@@ -38,23 +38,24 @@ model Jadwal {
   matakuliahId Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  matakuliah Matakuliah @relation(fields:[matakuliahId], references:[id], onDelete:Restrict)
+  matakuliah Matakuliah @relation(fields: [matakuliahId], references: [id], onDelete: Restrict)
   absensis Absensi[]
   @@index([matakuliahId])
 }
 model Absensi {
   id Int @id @default(autoincrement())
+  qrToken String @unique @default(uuid())
   mahasiswaId String
   jadwalId Int
   matakuliahId Int
   tanggalAbsensi DateTime
-  status String @default("Hadir")
+  status String @default("Menunggu")
   qrcodePath String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  mahasiswa Mahasiswa @relation(fields:[mahasiswaId], references:[nim], onDelete:Restrict)
-  jadwal Jadwal @relation(fields:[jadwalId], references:[id], onDelete:Restrict)
-  matakuliah Matakuliah @relation(fields:[matakuliahId], references:[id], onDelete:Restrict)
+  mahasiswa Mahasiswa @relation(fields: [mahasiswaId], references: [nim], onDelete: Restrict)
+  jadwal Jadwal @relation(fields: [jadwalId], references: [id], onDelete: Restrict)
+  matakuliah Matakuliah @relation(fields: [matakuliahId], references: [id], onDelete: Restrict)
   @@index([mahasiswaId])
   @@index([jadwalId])
   @@index([matakuliahId])
