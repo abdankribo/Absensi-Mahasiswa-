@@ -10,17 +10,13 @@ export default function GenerateAbsensi() {
   const [done, setDone] = useState(false);
 
   useEffect(() => {
-    const id = params.get("id");
-    const attendanceId = Number(id);
-    if (!Number.isInteger(attendanceId) || attendanceId < 1) {
-      setMessage("QR absensi tidak valid.");
-      return;
-    }
+    const token = params.get("token");
+    if (!token) { setMessage("QR absensi tidak valid."); return; }
 
     fetch("/api/absensi/confirm", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id: attendanceId }),
+      body: JSON.stringify({ token }),
     })
       .then(async (res) => {
         const data = await res.json();
