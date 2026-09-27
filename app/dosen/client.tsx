@@ -1,0 +1,9 @@
+"use client";
+import { useEffect, useState } from "react";
+import QRCode from "qrcode";
+export default function DosenClient(){
+ const [jadwals,setJadwals]=useState<any[]>([]),[active,setActive]=useState<any>(null),[qr,setQr]=useState(""),[msg,setMsg]=useState("");
+ useEffect(()=>{fetch("/api/dosen/sessions").then(r=>r.json()).then(setJadwals)},[]);
+ async function create(jadwalId:number){setMsg("");const r=await fetch("/api/dosen/sessions",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({jadwalId})});const d=await r.json();if(!r.ok){setMsg(d.error||"Gagal membuat QR");return}setActive(d);setQr(await QRCode.toDataURL(d.session.qrToken,{width:320,margin:2}))}
+ return <div className="dosen-area"><section className="card"><h2>Jadwal Mengajar</h2><p className="muted">Pilih jadwal untuk membuka QR absensi selama 15 menit.</p><div className="schedule-list">{jadwals.map(j=><div className="schedule-card" key={j.id}><div><strong>{j.matakuliah.namaMatakuliah}</strong><p>{j.kelas?.kode} · {j.hari} · {j.jamMulai}–{j.jamSelesai}</p><span>{j.kelas?.nama}</span></div><button className="btn primary" onClick={()=>create(j.id)}>Buat QR</button></div>)}</div>{!jadwals.length&&<p className="muted">Belum ada jadwal.</p>}{msg&&<div className="error-box">{msg}</div>}</section>{active&&<section className="card qr-panel"><h2>{active.jadwal.matakuliah.namaMatakuliah}</h2><p className="muted">Tampilkan QR kepada kelas {active.jadwal.kelas?.kode}. Sesi aktif 15 menit.</p>{qr&&<img src={qr} alt="QR Absensi" className="qr-image"/>}<div className="qr-token">{active.session.qrToken}</div></section>}</div>
+}
