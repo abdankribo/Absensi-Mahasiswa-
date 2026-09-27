@@ -34,17 +34,14 @@ export async function POST(req: Request) {
     });
 
     if (existing) {
-      return NextResponse.json(
-        { error: "Mahasiswa sudah memiliki sesi absensi untuk jadwal ini hari ini.", id: existing.id },
-        { status: 409 }
-      );
+      return NextResponse.json({ error: "Mahasiswa sudah memiliki sesi absensi untuk jadwal ini hari ini.", id: existing.id }, { status: 409 });
     }
 
     const created = await prisma.absensi.create({
       data: { mahasiswaId, jadwalId, matakuliahId, tanggalAbsensi: date, status: "Menunggu" },
     });
 
-    return NextResponse.json({ id: created.id }, { status: 201 });
+    return NextResponse.json({ id: created.id, token: created.qrToken }, { status: 201 });
   } catch {
     return NextResponse.json({ error: "Gagal menyimpan absensi." }, { status: 500 });
   }
