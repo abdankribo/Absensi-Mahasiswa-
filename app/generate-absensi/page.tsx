@@ -2,27 +2,34 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 
-export default function GenerateAbsensi({ searchParams }: { searchParams: Promise<{ id?: string }> }) {
+export default function GenerateAbsensi() {
+  const params = useSearchParams();
   const [message, setMessage] = useState("Memverifikasi QR absensi...");
   const [done, setDone] = useState(false);
 
   useEffect(() => {
-    searchParams.then(async ({ id }) => {
-      const attendanceId = Number(id);
-      if (!Number.isInteger(attendanceId) || attendanceId < 1) { setMessage("QR absensi tidak valid."); return; }
-      try {
-        const res = await fetch("/api/absensi/confirm", {
-          method: "POST", headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ id: attendanceId }),
-        });
+    const id = params.get("id");
+    const attendanceId = Number(id);
+    if (!Number.isInteger(attendanceId) || attendanceId < 1) {
+      setMessage("QR absensi tidak valid.");
+      return;
+    }
+
+    fetch("/api/absensi/confirm", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id: attendanceId }),
+    })
+      .then(async (res) => {
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || "Gagal memproses absensi.");
         setDone(true);
         setMessage(data.status === "already-recorded" ? "Absensi sudah tercatat sebelumnya." : "Absensi berhasil dikonfirmasi.");
-      } catch (error) { setMessage(error instanceof Error ? error.message : "Gagal memproses absensi."); }
-    });
-  }, [searchParams]);
+      })
+      .catch((error) => setMessage(error instanceof Error ? error.message : "Gagal memproses absensi."));
+  }, [params]);
 
   return <main className="confirm-page"><div className="card confirm-card">
     <div className="confirm-icon">{done ? "✓" : "…"}</div>
