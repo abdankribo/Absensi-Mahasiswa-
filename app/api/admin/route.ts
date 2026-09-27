@@ -5,8 +5,8 @@ import { hashPassword } from "@/lib/password";
 
 async function admin() {
   const user = await getSession();
-  if (!user || user.role !== "ADMIN" || !user.facultyId) return null;
-  return user;
+  if (!user || user.role !== "ADMIN" || user.facultyId == null) return null;
+  return { ...user, facultyId: user.facultyId };
 }
 
 export async function GET(req: Request) {
