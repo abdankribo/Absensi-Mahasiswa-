@@ -70,7 +70,7 @@ export default async function AdminPage() {
           <Link href={stat.href} className="admin-stat-card" key={stat.label}>
             <div className={`stat-icon ${stat.tone}`}>{stat.icon}</div>
             <div><span>{stat.label}</span><strong>{formatNumber(stat.value)}</strong><small>{stat.meta}</small></div>
-          </article>
+          </Link>
         ))}
       </section>
 
@@ -114,7 +114,7 @@ export default async function AdminPage() {
               <strong>{item.title}</strong>
               <span>{item.description}</span>
               <small>Modul siap digunakan</small>
-            </div>
+            </Link>
           ))}
         </div>
       </section>
