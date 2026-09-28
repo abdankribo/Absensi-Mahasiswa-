@@ -16,10 +16,10 @@ export default async function AdminPage() {
       prisma.matakuliah.count({ where: { facultyId: user.facultyId } }),
       prisma.kelas.count({ where: { facultyId: user.facultyId } }),
       prisma.jadwal.count({ where: { facultyId: user.facultyId } }),
-      prisma.absensi.count({ where: { facultyId: user.facultyId, status: "HADIR" } }),
-      prisma.absensi.count({ where: { facultyId: user.facultyId, status: "IZIN" } }),
-      prisma.absensi.count({ where: { facultyId: user.facultyId, status: "SAKIT" } }),
-      prisma.absensi.count({ where: { facultyId: user.facultyId, status: "ALPHA" } }),
+      prisma.absensi.count({ where: { facultyId: user.facultyId, status: "Hadir" } }),
+      prisma.absensi.count({ where: { facultyId: user.facultyId, status: "Izin" } }),
+      prisma.absensi.count({ where: { facultyId: user.facultyId, status: "Sakit" } }),
+      prisma.absensi.count({ where: { facultyId: user.facultyId, status: "Alpha" } }),
     ]);
 
   const totalAttendance = hadir + izin + sakit + alpha;
