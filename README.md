@@ -424,6 +424,7 @@ Untuk production, gunakan database dan password yang aman serta jangan menggunak
 - [x] Prisma ORM.
 - [x] MySQL.
 - [x] Multi-role ADMIN, DOSEN, dan MAHASISWA.
+- [x] Logout dari seluruh akun melalui sesi autentikasi.
 - [x] Pembatasan data berdasarkan fakultas.
 - [x] Dashboard admin.
 - [x] Manajemen mahasiswa.
