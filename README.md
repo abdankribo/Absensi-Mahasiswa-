@@ -73,6 +73,10 @@ Fungsi utama:
 - Mengubah password mahasiswa.
 - Mengubah password dosen.
 - Melakukan navigasi langsung ke modul administrasi melalui dashboard.
+- Mengimpor data mahasiswa dari Excel/CSV.
+- Mengimpor data dosen dari Excel/CSV.
+- Mengimpor data mata kuliah dari Excel/CSV.
+- Mengimpor data jadwal dari Excel/CSV.
 - Melihat data yang dibatasi berdasarkan fakultas admin.
 
 ### 2. DOSEN
@@ -97,11 +101,13 @@ Fungsi utama:
 
 - Login menggunakan NIM dan password.
 - Melihat informasi akun.
-- Mengakses proses absensi.
 - Memindai QR Code menggunakan kamera perangkat.
 - Mengirim hasil pemindaian ke sistem.
 - Mendapatkan validasi terhadap sesi absensi.
-- Mencegah absensi ganda pada sesi/tanggal yang sama.
+- Melihat daftar hadir milik akun mahasiswa sendiri.
+- Tidak dapat membuat QR Code atau membuat absensi manual.
+- Tidak dapat melihat daftar kehadiran mahasiswa lain.
+- Mencegah absensi ganda pada sesi yang sama.
 
 ## Modul Utama
 
@@ -185,6 +191,23 @@ Data jadwal mencakup:
 - Kelas.
 
 Sistem melakukan validasi relasi agar jadwal tidak menghubungkan data dari fakultas yang berbeda.
+
+### Import Data Excel / CSV
+
+Admin dapat menambahkan data master secara massal tanpa menginput satu per satu melalui form. Fitur tersedia pada tab **Mahasiswa**, **Dosen**, **Mata Kuliah**, dan **Jadwal**.
+
+Format kolom yang didukung:
+
+| Data | Kolom utama |
+|---|---|
+| Mahasiswa | `nim`, `nama`, `kelas`, `password` opsional |
+| Dosen | `nidn`, `nama`, `password` opsional |
+| Mata Kuliah | `namaMatakuliah` atau `nama_mata_kuliah`, `sks` |
+| Jadwal | `hari`, `jamMulai`, `jamSelesai`, `matakuliah`, `nidn`, `kelas` |
+
+File yang dapat digunakan adalah **.xlsx**, **.xls**, atau **.csv** dengan ukuran maksimal 5 MB. Untuk import jadwal, mata kuliah, dosen, dan kelas yang dirujuk harus sudah tersedia pada fakultas admin. Password mahasiswa dan dosen yang dikosongkan akan menggunakan password awal `12345678`, kemudian dapat diubah melalui manajemen data.
+
+Setiap baris diproses secara terpisah. Jika ada baris yang gagal, sistem menampilkan nomor baris dan alasan kegagalannya sehingga data yang benar tetap dapat ditambahkan.
 
 ### Absensi QR Code
 
@@ -436,6 +459,8 @@ Pemeriksaan ROLE
   └── MAHASISWA   → /mahasiswa
 ```
 
+Halaman login dibuat khusus untuk autentikasi dan tidak menampilkan menu Beranda atau Daftar Hadir. Setelah berhasil login, pengguna baru mendapatkan navigasi sesuai role.
+
 Setiap pengguna yang sudah login memiliki informasi akun dan tombol **Logout** pada area navigasi aplikasi.
 
 Proses logout:
@@ -480,6 +505,12 @@ Fitur logout berlaku untuk seluruh role:
 - [x] Manajemen mata kuliah.
 - [x] Manajemen kelas.
 - [x] Manajemen jadwal.
+- [x] Import mahasiswa dari Excel/CSV.
+- [x] Import dosen dari Excel/CSV.
+- [x] Import mata kuliah dari Excel/CSV.
+- [x] Import jadwal dari Excel/CSV.
+- [x] Daftar hadir mahasiswa hanya menampilkan kehadiran akun sendiri.
+- [x] Mahasiswa hanya dapat melakukan absensi melalui scan QR.
 - [x] Perubahan password mahasiswa oleh admin.
 - [x] Perubahan password dosen oleh admin.
 - [x] QR Code sesi absensi.
