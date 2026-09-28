@@ -9,6 +9,7 @@ async function main() {
   await prisma.faculty.upsert({where:{code:"FE"},update:{name:"Fakultas Ekonomi"},create:{code:"FE",name:"Fakultas Ekonomi"}});
 
   const admin = await prisma.user.upsert({where:{identifier:"admin.teknik"},update:{name:"Admin Fakultas Teknik",passwordHash:hashPassword(DEFAULT_PASSWORD),role:"ADMIN",facultyId:teknik.id},create:{name:"Admin Fakultas Teknik",identifier:"admin.teknik",passwordHash:hashPassword(DEFAULT_PASSWORD),role:"ADMIN",facultyId:teknik.id}});
+  await prisma.user.upsert({where:{identifier:"ADMINTEKNIK"},update:{name:"Admin Teknik",passwordHash:hashPassword("TEKNIK"),role:"ADMIN",facultyId:teknik.id},create:{name:"Admin Teknik",identifier:"ADMINTEKNIK",passwordHash:hashPassword("TEKNIK"),role:"ADMIN",facultyId:teknik.id}});
   const dosenUser = await prisma.user.upsert({where:{identifier:"0123456789"},update:{name:"Dr. Budi Santoso",role:"DOSEN",facultyId:teknik.id},create:{name:"Dr. Budi Santoso",identifier:"0123456789",passwordHash:hashPassword(DEFAULT_PASSWORD),role:"DOSEN",facultyId:teknik.id}});
   const dosen = await prisma.dosen.upsert({where:{nidn:"0123456789"},update:{nama:"Dr. Budi Santoso",userId:dosenUser.id,facultyId:teknik.id},create:{nidn:"0123456789",nama:"Dr. Budi Santoso",userId:dosenUser.id,facultyId:teknik.id}});
   const kelas = await prisma.kelas.upsert({where:{kode:"TI-4A"},update:{nama:"Teknik Informatika 4A",facultyId:teknik.id},create:{kode:"TI-4A",nama:"Teknik Informatika 4A",facultyId:teknik.id}});
