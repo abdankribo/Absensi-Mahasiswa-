@@ -2,7 +2,7 @@ import { PrismaClient } from "@prisma/client";
 import { hashPassword } from "../lib/password";
 
 const prisma = new PrismaClient();
-const DEFAULT_PASSWORD = process.env.SEED_DEFAULT_PASSWORD || "ChangeMe123!";
+const DEFAULT_PASSWORD = "teknik";
 
 async function main() {
   const teknik = await prisma.faculty.upsert({where:{code:"FT"},update:{name:"Fakultas Teknik"},create:{code:"FT",name:"Fakultas Teknik"}});
