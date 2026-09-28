@@ -14,3 +14,8 @@
 .logout-button{width:calc(100% - 28px);margin:18px 14px 0;display:flex;align-items:center;justify-content:center;gap:8px;border:1px solid #d8e2ec;border-radius:10px;background:#fff;color:#173452;font:inherit;font-weight:800;padding:10px 12px;cursor:pointer;transition:.2s}.logout-button:hover{background:#f5f8fb;border-color:#b9c9d8}.logout-button:disabled{opacity:.65;cursor:wait}
 
 .sidebar-account{margin-top:auto;padding-top:18px;border-top:1px solid rgba(255,255,255,.12)}.sidebar-user{display:flex;align-items:center;gap:10px;padding:0 14px;color:#fff}.sidebar-user>span:last-child{display:grid;min-width:0}.sidebar-user strong{font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.sidebar-user small{font-size:10px;opacity:.7;margin-top:2px}.sidebar-avatar{width:34px;height:34px;display:grid;place-items:center;border-radius:10px;background:#173a5c;color:#fff;font-weight:800;flex:none}.sidebar .logout-button{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.14);color:#fff}.sidebar .logout-button:hover{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.25)}
+
+
+/* Halaman login berdiri sendiri tanpa navigasi aplikasi. */
+body:has(.login-page) .sidebar{display:none}
+body:has(.login-page) .main{margin-left:0;width:100%;padding:0}
