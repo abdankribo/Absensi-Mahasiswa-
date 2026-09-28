@@ -64,3 +64,27 @@ npm start
 ```
 
 Jangan commit file `.env` atau credential database ke repository.
+## Akun Demo / Seed
+
+Berikut akun yang tersedia untuk pengujian aplikasi:
+
+### ADMIN
+
+| ID | Password |
+|---|---|
+|---|---|
+| `ADMINTEKNIK` | `TEKNIK` |
+
+### DOSEN
+
+| NIDN | Password |
+|---|---|
+| `0123456789` | `Budi1234` |
+
+### MAHASISWA
+
+| NIM | Password |
+|---|---|
+| `20240002` | `Siti1234` |
+
+> **Catatan:** Akun di atas merupakan akun demo/seed untuk pengujian. Jangan gunakan password tersebut untuk akun production yang sebenarnya.
