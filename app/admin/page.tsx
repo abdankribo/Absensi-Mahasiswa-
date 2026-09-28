@@ -30,19 +30,19 @@ export default async function AdminPage() {
     : 0;
 
   const stats = [
-    { label: "Total Mahasiswa", value: mahasiswa, icon: "👥", tone: "blue", meta: "Data mahasiswa aktif" },
-    { label: "Total Dosen", value: dosen, icon: "👤", tone: "purple", meta: "Dosen terdaftar" },
-    { label: "Total Mata Kuliah", value: matakuliah, icon: "📖", tone: "green", meta: "Mata kuliah fakultas" },
-    { label: "Total Kelas", value: kelas, icon: "🏫", tone: "orange", meta: "Kelas terdaftar" },
-    { label: "Total Jadwal", value: jadwal, icon: "📅", tone: "red", meta: "Jadwal perkuliahan" },
+    { label: "Total Mahasiswa", value: mahasiswa, icon: "👥", tone: "blue", meta: "Data mahasiswa aktif", href: "/admin/manage?tab=mahasiswa" },
+    { label: "Total Dosen", value: dosen, icon: "👤", tone: "purple", meta: "Dosen terdaftar", href: "/admin/manage?tab=dosen" },
+    { label: "Total Mata Kuliah", value: matakuliah, icon: "📖", tone: "green", meta: "Mata kuliah fakultas", href: "/admin/manage?tab=matakuliah" },
+    { label: "Total Kelas", value: kelas, icon: "🏫", tone: "orange", meta: "Kelas terdaftar", href: "/admin/manage?tab=kelas" },
+    { label: "Total Jadwal", value: jadwal, icon: "📅", tone: "red", meta: "Jadwal perkuliahan", href: "/admin/manage?tab=jadwal" },
   ];
 
   const management = [
-    { title: "Mahasiswa", description: "Lihat dan kelola data mahasiswa", icon: "👥", tone: "blue" },
-    { title: "Dosen", description: "Lihat dan kelola data dosen", icon: "👤", tone: "purple" },
-    { title: "Mata Kuliah", description: "Kelola mata kuliah", icon: "📖", tone: "green" },
-    { title: "Kelas", description: "Kelola data kelas", icon: "🏫", tone: "orange" },
-    { title: "Jadwal", description: "Kelola jadwal kuliah", icon: "📅", tone: "red" },
+    { title: "Mahasiswa", description: "Lihat dan kelola data mahasiswa", icon: "👥", tone: "blue", href: "/admin/manage?tab=mahasiswa" },
+    { title: "Dosen", description: "Lihat dan kelola data dosen", icon: "👤", tone: "purple", href: "/admin/manage?tab=dosen" },
+    { title: "Mata Kuliah", description: "Kelola mata kuliah", icon: "📖", tone: "green", href: "/admin/manage?tab=matakuliah" },
+    { title: "Kelas", description: "Kelola data kelas", icon: "🏫", tone: "orange", href: "/admin/manage?tab=kelas" },
+    { title: "Jadwal", description: "Kelola jadwal kuliah", icon: "📅", tone: "red", href: "/admin/manage?tab=jadwal" },
   ];
 
   return (
@@ -67,10 +67,10 @@ export default async function AdminPage() {
 
       <section className="admin-stat-grid">
         {stats.map((stat) => (
-          <article className="admin-stat-card" key={stat.label}>
+          <Link href={stat.href} className="admin-stat-card" key={stat.label}>
             <div className={`stat-icon ${stat.tone}`}>{stat.icon}</div>
             <div><span>{stat.label}</span><strong>{formatNumber(stat.value)}</strong><small>{stat.meta}</small></div>
-          </article>
+          </Link>
         ))}
       </section>
 
@@ -109,12 +109,12 @@ export default async function AdminPage() {
         <div className="panel-heading"><div><h2>Menu Manajemen Data</h2><p>Ringkasan modul administrasi fakultas</p></div></div>
         <div className="management-grid">
           {management.map((item) => (
-            <div className="management-card" key={item.title}>
+            <Link href={item.href} className="management-card" key={item.title}>
               <div className={`management-icon ${item.tone}`}>{item.icon}</div>
               <strong>{item.title}</strong>
               <span>{item.description}</span>
               <small>Modul siap digunakan</small>
-            </div>
+            </Link>
           ))}
         </div>
       </section>
