@@ -416,6 +416,52 @@ npm start
 
 Untuk production, gunakan database dan password yang aman serta jangan menggunakan akun demo sebagai akun operasional.
 
+## Autentikasi dan Logout
+
+Sistem menggunakan sesi autentikasi untuk menjaga akses pengguna setelah berhasil login. Setelah autentikasi berhasil, pengguna diarahkan ke dashboard sesuai role:
+
+```text
+LOGIN
+  │
+  ▼
+Validasi identifier & password
+  │
+  ▼
+Pembuatan sesi autentikasi
+  │
+  ▼
+Pemeriksaan ROLE
+  ├── ADMIN       → /admin
+  ├── DOSEN       → /dosen
+  └── MAHASISWA   → /mahasiswa
+```
+
+Setiap pengguna yang sudah login memiliki informasi akun dan tombol **Logout** pada area navigasi aplikasi.
+
+Proses logout:
+
+```text
+Pengguna menekan Logout
+        │
+        ▼
+POST /api/auth/logout
+        │
+        ▼
+Sesi autentikasi dihapus
+        │
+        ▼
+Pengguna diarahkan ke /login
+```
+
+Fitur logout berlaku untuk seluruh role:
+
+- ADMIN dapat mengakhiri sesi dari dashboard administrasi.
+- DOSEN dapat mengakhiri sesi dari dashboard dosen.
+- MAHASISWA dapat mengakhiri sesi dari dashboard mahasiswa.
+- Tombol logout memiliki status proses agar tidak menjalankan permintaan berulang ketika sedang diproses.
+- Setelah sesi dihapus, halaman yang membutuhkan autentikasi tidak dapat digunakan tanpa login kembali.
+
+
 ## Checklist Fungsional
 
 - [x] Migrasi Laravel/Blade ke Next.js.
@@ -425,6 +471,8 @@ Untuk production, gunakan database dan password yang aman serta jangan menggunak
 - [x] MySQL.
 - [x] Multi-role ADMIN, DOSEN, dan MAHASISWA.
 - [x] Logout dari seluruh akun melalui sesi autentikasi.
+- [x] Redirect kembali ke halaman login setelah logout.
+- [x] Proteksi halaman berdasarkan sesi dan role pengguna.
 - [x] Pembatasan data berdasarkan fakultas.
 - [x] Dashboard admin.
 - [x] Manajemen mahasiswa.
