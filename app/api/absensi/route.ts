@@ -1,7 +1,13 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { getSession } from "@/lib/auth";
 
 export async function POST(req: Request) {
+  const user = await getSession();
+  if (!user || !["ADMIN", "DOSEN"].includes(user.role) || user.facultyId == null) {
+    return NextResponse.json({ error: "Hanya admin atau dosen yang dapat membuat sesi absensi." }, { status: 403 });
+  }
+
   try {
     const body = await req.json();
     const mahasiswaId = String(body.mahasiswaId || "");
@@ -13,13 +19,17 @@ export async function POST(req: Request) {
     }
 
     const [m, mk, j] = await Promise.all([
-      prisma.mahasiswa.findUnique({ where: { nim: mahasiswaId } }),
-      prisma.matakuliah.findUnique({ where: { id: matakuliahId } }),
-      prisma.jadwal.findUnique({ where: { id: jadwalId } }),
+      prisma.mahasiswa.findFirst({ where: { nim: mahasiswaId, facultyId: user.facultyId } }),
+      prisma.matakuliah.findFirst({ where: { id: matakuliahId, facultyId: user.facultyId } }),
+      prisma.jadwal.findFirst({ where: { id: jadwalId, facultyId: user.facultyId } }),
     ]);
 
-    if (!m || !mk || !j) return NextResponse.json({ error: "Data master tidak ditemukan." }, { status: 404 });
+    if (!m || !mk || !j) return NextResponse.json({ error: "Data master tidak ditemukan pada fakultas Anda." }, { status: 404 });
     if (j.matakuliahId !== mk.id) return NextResponse.json({ error: "Jadwal tidak sesuai mata kuliah." }, { status: 400 });
+
+    if (user.role === "DOSEN" && user.dosen && j.dosenId !== user.dosen.id) {
+      return NextResponse.json({ error: "Jadwal bukan jadwal mengajar Anda." }, { status: 403 });
+    }
 
     const date = body.tanggalAbsensi ? new Date(body.tanggalAbsensi) : new Date();
     if (Number.isNaN(date.getTime())) return NextResponse.json({ error: "Tanggal absensi tidak valid." }, { status: 400 });
