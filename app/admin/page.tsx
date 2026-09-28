@@ -8,14 +8,16 @@ function formatNumber(value: number) {
 
 export default async function AdminPage() {
   const user = await requireRole("ADMIN");
+  const facultyId = user.facultyId;
+  if (facultyId == null) throw new Error("Admin belum memiliki fakultas.");
 
   const [mahasiswa, dosen, matakuliah, kelas, jadwal, hadir, izin, sakit, alpha] =
     await Promise.all([
-      prisma.mahasiswa.count({ where: { facultyId: user.facultyId ?? undefined } }),
-      prisma.dosen.count({ where: { facultyId: user.facultyId } }),
-      prisma.matakuliah.count({ where: { facultyId: user.facultyId } }),
-      prisma.kelas.count({ where: { facultyId: user.facultyId } }),
-      prisma.jadwal.count({ where: { facultyId: user.facultyId } }),
+      prisma.mahasiswa.count({ where: { facultyId: facultyId } }),
+      prisma.dosen.count({ where: { facultyId: facultyId } }),
+      prisma.matakuliah.count({ where: { facultyId: facultyId } }),
+      prisma.kelas.count({ where: { facultyId: facultyId } }),
+      prisma.jadwal.count({ where: { facultyId: facultyId } }),
       prisma.absensi.count({ where: { facultyId: user.facultyId, status: "Hadir" } }),
       prisma.absensi.count({ where: { facultyId: user.facultyId, status: "Izin" } }),
       prisma.absensi.count({ where: { facultyId: user.facultyId, status: "Sakit" } }),
