@@ -12,5 +12,15 @@ export async function POST(req: Request) {
     if (!user || !verifyPassword(password,user.passwordHash)) return NextResponse.json({error:"ID atau password salah."},{status:401});
     await setSession(user.id);
     return NextResponse.json({ok:true,role:user.role,name:user.name,faculty:user.faculty?.name ?? null});
-  } catch { return NextResponse.json({error:"Login gagal."},{status:500}); }
+  } catch (error) {
+    console.error("LOGIN_ERROR", error);
+    const message = error instanceof Error ? error.message : "";
+    if (message.includes("AUTH_SECRET")) {
+      return NextResponse.json({error:"Konfigurasi session server bermasalah (AUTH_SECRET)."}, {status:500});
+    }
+    if (message.includes("Prisma") || message.includes("database") || message.includes("DATABASE_URL")) {
+      return NextResponse.json({error:"Koneksi database server bermasalah."}, {status:500});
+    }
+    return NextResponse.json({error:"Terjadi kesalahan pada server saat login."},{status:500});
+  }
 }
